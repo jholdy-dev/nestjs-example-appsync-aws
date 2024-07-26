@@ -6,6 +6,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { useGraphQLSSE } from '@graphql-yoga/plugin-graphql-sse';
 import { HelloResolver } from './hello.resolver';
 
+export const resolvers = [HelloResolver];
+
 @Module({
   imports: [
     GraphQLModule.forRoot<YogaDriverConfig>({
@@ -15,6 +17,6 @@ import { HelloResolver } from './hello.resolver';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, HelloResolver],
+  providers: [AppService, ...resolvers],
 })
 export class AppModule {}

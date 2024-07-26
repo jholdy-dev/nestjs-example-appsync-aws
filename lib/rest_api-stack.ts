@@ -4,9 +4,18 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import path from 'path';
 
+type Props = {
+  instances: {
+    lambdaName: string;
+    kind: string;
+  }[];
+} & cdk.StackProps;
+
 export class RestApiStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: Props) {
     super(scope, id, props);
+
+    console.log({ instances: props.instances });
 
     const LambdaHandler = new lambda.DockerImageFunction(
       this,
