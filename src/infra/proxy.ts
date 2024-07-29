@@ -2,12 +2,14 @@ interface SelectionSet {
   [key: string]: SelectionSet | boolean;
 }
 
+type Vars = { [key: string]: any };
+
 interface QueryInfo {
   fieldName: string;
   selectionSetList: string[];
   selectionSetGraphQL: string;
   parentTypeName: string;
-  variables: { [key: string]: any };
+  variables: Vars;
 }
 
 function buildSelectionSet(selectionSetList: string[]): SelectionSet {
@@ -43,23 +45,31 @@ function selectionSetToString(selectionSet: SelectionSet): string {
   return recurse(selectionSet);
 }
 
-export function buildGraphQLQuery(info: QueryInfo): string {
-  const { fieldName, selectionSetList, parentTypeName, variables } = info;
+export function buildGraphQLQuery(info: QueryInfo, args: Vars): string {
+  const { fieldName, selectionSetList, parentTypeName, variables: vars } = info;
+
+  let variables = {};
+
+  if (Object.keys(vars).length > 0) {
+    variables = vars;
+  } else {
+    const hasArguments = Object.keys(args).length > 0;
+
+    if (hasArguments) {
+      variables = args;
+    }
+  }
+
   const selectionSet = buildSelectionSet(selectionSetList);
   const selectionSetString = selectionSetToString(selectionSet);
-
   const hasVariables = Object.keys(variables).length > 0;
-  const variablesStr = Object.entries(variables)
-    .map(([key, value]) => `$${key}: ${typeof value}`)
-    .join(', ');
-  const variablesString = hasVariables ? `(${variablesStr})` : '';
 
   const argsStr = Object.entries(variables)
-    .map(([key]) => `${key}: $${key}`)
+    .map(([key, value]) => `${key}: "${value}"`)
     .join(', ');
   const argsString = hasVariables ? `(${argsStr})` : '';
 
-  return `${parentTypeName.toLowerCase()} ${variablesString} {
+  return `${parentTypeName.toLowerCase()}  {
   ${fieldName}${argsString} ${
     selectionSetString
       ? `{

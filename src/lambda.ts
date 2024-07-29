@@ -27,13 +27,13 @@ export const handler: Handler = async (
     '<===================',
   );
   server = server ?? (await bootstrap());
-  const graphqlSchema = buildGraphQLQuery(event.info);
+  const graphqlSchema = buildGraphQLQuery(event.info, event.arguments);
 
   const result = await server(
     {
       body: JSON.stringify({
         query: graphqlSchema,
-        variables: event?.info?.variables ?? {},
+        variables: (event?.info?.variables || event.arguments) ?? {},
         operationName: null,
       }),
       path: '/graphql',

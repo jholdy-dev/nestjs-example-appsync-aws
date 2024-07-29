@@ -1,3 +1,19 @@
+export const mutationSendMessage = {
+  arguments: { content: 'tes', sender: 'tes' },
+  identity: null,
+  source: null,
+  request: { headers: [Object], domainName: null },
+  prev: null,
+  info: {
+    fieldName: 'sendMessage',
+    selectionSetList: [],
+    selectionSetGraphQL: '',
+    parentTypeName: 'Mutation',
+    variables: {},
+  },
+  stash: {},
+};
+
 export const queryHello = {
   arguments: {},
   identity: null,
