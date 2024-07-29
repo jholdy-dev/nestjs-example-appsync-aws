@@ -1,19 +1,17 @@
+import { HelloResolver } from './hello.resolver';
 import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
-import { GraphQLModule } from '@nestjs/graphql';
-import { useGraphQLSSE } from '@graphql-yoga/plugin-graphql-sse';
-import { HelloResolver } from './hello.resolver';
 
 export const resolvers = [HelloResolver];
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<YogaDriverConfig>({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
       autoSchemaFile: true,
-      driver: YogaDriver,
-      plugins: [useGraphQLSSE()],
     }),
   ],
   controllers: [AppController],

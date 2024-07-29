@@ -4,7 +4,7 @@ import {
   GraphQLSchemaFactory,
 } from '@nestjs/graphql';
 import { AppModule, resolvers } from './app.module';
-import { printSchema } from 'graphql';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 export const getSchema = async () => {
   const app = await NestFactory.createApplicationContext(AppModule);
@@ -32,5 +32,5 @@ export async function generateSchema() {
 
   const gqlSchemaFactory = app.get(GraphQLSchemaFactory);
   const schema = await gqlSchemaFactory.create(resolvers);
-  return printSchema(schema);
+  return printSchemaWithDirectives(schema);
 }

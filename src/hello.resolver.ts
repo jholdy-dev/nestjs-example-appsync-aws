@@ -1,5 +1,6 @@
 import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
+import { aws_subscribe } from './infra/appsync/directives/subscription';
 
 const pubSub = new PubSub();
 
@@ -20,6 +21,7 @@ export class HelloResolver {
     return 'Message sent!';
   }
 
+  @aws_subscribe('mutations', ['sendMessage'])
   @Subscription(() => String)
   messageSent() {
     return pubSub.asyncIterator('messageSent');
