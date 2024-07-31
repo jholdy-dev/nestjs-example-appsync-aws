@@ -10,6 +10,7 @@ export const getSchema = async () => {
   const app = await NestFactory.createApplicationContext(AppModule);
   const gqlSchemaFactory = await app.resolve(GraphQLSchemaFactory);
   const schema = await gqlSchemaFactory.create(resolvers);
+  await app.close();
   return schema;
 };
 
@@ -32,5 +33,6 @@ export async function generateSchema() {
 
   const gqlSchemaFactory = app.get(GraphQLSchemaFactory);
   const schema = await gqlSchemaFactory.create(resolvers);
+  await app.close();
   return printSchemaWithDirectives(schema);
 }

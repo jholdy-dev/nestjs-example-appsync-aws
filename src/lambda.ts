@@ -20,11 +20,11 @@ export const handler: Handler = async (
   callback: Callback,
 ) => {
   console.log(
-    '==============>',
+    '================= EVENT =================',
     {
       event,
     },
-    '<===================',
+    '================= EVENT =================',
   );
   server = server ?? (await bootstrap());
   const graphqlSchema = buildGraphQLQuery(event.info, event.arguments);
@@ -41,6 +41,7 @@ export const handler: Handler = async (
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        ...event.headers,
       },
       multiValueHeaders: {
         Accept: ['application/json'],
@@ -54,14 +55,6 @@ export const handler: Handler = async (
     },
     context,
     callback,
-  );
-
-  console.log(
-    '==============>',
-    {
-      result,
-    },
-    '<===================',
   );
 
   const body = JSON.parse(result.body);

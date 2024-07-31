@@ -2,6 +2,7 @@ import { HelloResolver } from './hello.resolver';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { PubSub } from 'graphql-subscriptions';
 
 export const resolvers = [HelloResolver];
 
@@ -14,6 +15,12 @@ export const resolvers = [HelloResolver];
     }),
   ],
   controllers: [],
-  providers: [...resolvers],
+  providers: [
+    ...resolvers,
+    {
+      provide: 'PUB_SUB',
+      useValue: new PubSub(),
+    },
+  ],
 })
 export class AppModule {}

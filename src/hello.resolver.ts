@@ -1,11 +1,12 @@
 import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { aws_subscribe } from './infra/appsync/directives/subscription';
-
-const pubSub = new PubSub();
+import { Inject } from '@nestjs/common';
 
 @Resolver()
 export class HelloResolver {
+  constructor(@Inject('PUB_SUB') private pubSub: PubSub) {}
+
   @Query(() => String)
   async hello() {
     return 'Hello World!';
@@ -17,13 +18,13 @@ export class HelloResolver {
     @Args('sender') sender: string,
   ) {
     const message = { content, sender };
-    pubSub.publish('messageSent', { messageSent: message.content });
+    this.pubSub.publish('messageSent', { messageSent: message.content });
     return 'Message sent!';
   }
 
   @aws_subscribe('mutations', ['sendMessage'])
   @Subscription(() => String)
   messageSent() {
-    return pubSub.asyncIterator('messageSent');
+    return this.pubSub.asyncIterator('messageSent');
   }
 }
