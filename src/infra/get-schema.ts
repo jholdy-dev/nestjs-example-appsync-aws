@@ -3,7 +3,7 @@ import {
   GraphQLSchemaBuilderModule,
   GraphQLSchemaFactory,
 } from '@nestjs/graphql';
-import { AppModule, resolvers } from './app.module';
+import { AppModule, resolvers } from '../app.module';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 
 export const getSchema = async () => {
