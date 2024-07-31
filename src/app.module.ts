@@ -10,6 +10,7 @@ export const resolvers = [HelloResolver];
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      installSubscriptionHandlers: true,
     }),
   ],
   controllers: [],

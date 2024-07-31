@@ -1,0 +1,34 @@
+services:
+  nestjs:
+    container_name: nestjs_app_aws
+    image: node:20
+    platform: linux/amd64
+    working_dir: /usr/src/app
+    volumes:
+      - ./:/usr/src/app
+    command: npm run start
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: your_username
+      DATABASE_PASSWORD: your_password
+      DATABASE_NAME: your_database
+
+  postgres:
+    container_name: postgres_db
+    image: postgres:13
+    environment:
+      POSTGRES_DB: your_database
+      POSTGRES_USER: your_username
+      POSTGRES_PASSWORD: your_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

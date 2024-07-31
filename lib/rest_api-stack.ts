@@ -4,6 +4,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as cdk from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 import fs from 'fs';
+import { LogGroup } from 'aws-cdk-lib/aws-logs';
 
 type Props = {
   instances: {
@@ -25,9 +26,6 @@ export class AppSyncStack extends cdk.Stack {
 
     const api = new appsync.GraphqlApi(this, 'app-sync-test-nest', {
       name: 'app-sync-test-nest',
-      logConfig: {
-        fieldLogLevel: appsync.FieldLogLevel.ALL,
-      },
       definition,
       authorizationConfig: {
         defaultAuthorization: {
@@ -39,9 +37,8 @@ export class AppSyncStack extends cdk.Stack {
     this.lambda = new lambda.DockerImageFunction(this, 'LambdaHandler', {
       timeout: cdk.Duration.seconds(30),
       functionName: 'LambdaHandler',
-      code: lambda.DockerImageCode.fromImageAsset(
-        path.join(__dirname, '../../teste_localstack/'),
-      ),
+      logGroup: new LogGroup(this, 'LAMBDA_TEST'),
+      code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, '../')),
     });
 
     const lambdaDs = api.addLambdaDataSource('lambdaDatasource', this.lambda);
