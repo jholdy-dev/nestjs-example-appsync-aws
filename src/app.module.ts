@@ -3,6 +3,9 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PubSub } from 'graphql-subscriptions';
+import { UsersModule } from './users/users.module';
+import { DatabaseService } from './database/database.service';
+import { UserEntity } from './users/entities/user.entity';
 
 export const resolvers = [HelloResolver];
 
@@ -13,6 +16,7 @@ export const resolvers = [HelloResolver];
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
     }),
+    UsersModule,
   ],
   controllers: [],
   providers: [
@@ -21,6 +25,8 @@ export const resolvers = [HelloResolver];
       provide: 'PUB_SUB',
       useValue: new PubSub(),
     },
+    DatabaseService,
+    UserEntity,
   ],
 })
 export class AppModule {}
