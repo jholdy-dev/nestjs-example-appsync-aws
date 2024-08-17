@@ -1,3 +1,5 @@
+import { AppSyncResolverEvent } from 'aws-lambda';
+
 interface SelectionSet {
   [key: string]: SelectionSet | boolean;
 }
@@ -78,4 +80,40 @@ export function buildGraphQLQuery(info: QueryInfo, args: Vars): string {
       : ''
   }
 }`;
+}
+
+export function getEventHttp<T = any>(
+  appSyncResolverEvent: AppSyncResolverEvent<T>,
+) {
+  const query = buildGraphQLQuery(
+    appSyncResolverEvent.info,
+    appSyncResolverEvent.arguments,
+  );
+
+  return {
+    body: JSON.stringify({
+      query,
+      variables:
+        (appSyncResolverEvent?.info?.variables ||
+          appSyncResolverEvent.arguments) ??
+        {},
+      operationName: null,
+    }),
+    path: '/graphql',
+    httpMethod: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...appSyncResolverEvent.request.headers,
+    },
+    multiValueHeaders: {
+      Accept: ['application/json'],
+      'Content-Type': ['application/json'],
+    },
+    requestContext: {
+      path: '/graphql',
+      resourcePath: '/{proxy+}',
+      httpMethod: 'POST',
+    },
+  };
 }

@@ -12,7 +12,6 @@ export class DatabaseService {
 
     const client = new DynamoDBClient({
       region: clientConfig.region,
-      endpoint: 'http://localhost:8000',
     });
 
     this.client = DynamoDBDocumentClient.from(client, {

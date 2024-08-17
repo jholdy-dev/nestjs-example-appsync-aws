@@ -35,7 +35,8 @@ export class AppSyncStack extends cdk.Stack {
     });
 
     this.lambda = new lambda.DockerImageFunction(this, 'LambdaHandler', {
-      timeout: cdk.Duration.seconds(30),
+      timeout: cdk.Duration.seconds(5),
+      memorySize: 256,
       functionName: 'LambdaHandler',
       logGroup: new LogGroup(this, 'LAMBDA_TEST'),
       code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, '../')),

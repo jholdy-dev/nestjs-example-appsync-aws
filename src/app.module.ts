@@ -6,11 +6,13 @@ import { PubSub } from 'graphql-subscriptions';
 import { UsersModule } from './users/users.module';
 import { DatabaseService } from './database/database.service';
 import { UserEntity } from './users/entities/user.entity';
+import { ConfigModule } from '@nestjs/config';
 
 export const resolvers = [HelloResolver];
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
