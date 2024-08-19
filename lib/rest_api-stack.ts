@@ -24,6 +24,20 @@ export class AppSyncStack extends cdk.Stack {
 
     const definition = appsync.Definition.fromFile(tempFileName);
 
+    const authFunction = new lambda.DockerImageFunction(
+      this,
+      'LambdaAuthHandler',
+      {
+        timeout: cdk.Duration.seconds(5),
+        memorySize: 256,
+        functionName: 'LambdaAuthHandler',
+        logGroup: new LogGroup(this, 'LAMBDA_AUTH'),
+        code: lambda.DockerImageCode.fromImageAsset(
+          path.join(__dirname, '../'),
+        ),
+      },
+    );
+
     const api = new appsync.GraphqlApi(this, 'app-sync-test-nest', {
       name: 'app-sync-test-nest',
       definition,
@@ -31,6 +45,14 @@ export class AppSyncStack extends cdk.Stack {
         defaultAuthorization: {
           authorizationType: appsync.AuthorizationType.API_KEY,
         },
+        additionalAuthorizationModes: [
+          {
+            authorizationType: appsync.AuthorizationType.LAMBDA,
+            lambdaAuthorizerConfig: {
+              handler: authFunction,
+            },
+          },
+        ],
       },
     });
 

@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import serverlessExpress from '@codegenie/serverless-express';
-import { AppSyncResolverEvent, Callback, Context, Handler } from 'aws-lambda';
+import { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from './app.module';
 import { getEventHttp } from './infra/proxy';
 
@@ -15,17 +15,26 @@ async function bootstrap(): Promise<Handler> {
 }
 
 export const handler: Handler = async (
-  appSyncResolverEvent: AppSyncResolverEvent<any>,
+  appSyncResolverEvent: any,
   context: Context,
   callback: Callback,
 ) => {
   console.log(
     '================= EVENT =================',
     {
-      event: appSyncResolverEvent,
+      event: JSON.stringify(appSyncResolverEvent),
     },
     '================= EVENT =================',
   );
+
+  if (appSyncResolverEvent.authorizationToken) {
+    return {
+      isAuthorized: true,
+      resolverContext: {
+        user: 'authenticatedUser',
+      },
+    };
+  }
 
   server = server ?? (await bootstrap());
 
